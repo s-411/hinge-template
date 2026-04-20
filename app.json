@@ -14,7 +14,12 @@
       "backgroundColor": "#f6f1ea"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.astrum.themepicker",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -30,6 +35,13 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a4606b2e-ffc2-4070-8729-01de10e27aa4"
+      }
+    },
+    "owner": "s-411"
   }
 }
