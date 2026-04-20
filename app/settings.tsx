@@ -1,10 +1,18 @@
-// Settings — currently hosts the theme mode switcher (System / Light / Dark).
-// Add future global settings rows below the Appearance card.
+// Settings — hosts the theme mode switcher (System / Light / Dark) and the
+// primary/secondary hue pickers. Add future global settings rows below.
 import React, { useMemo } from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { border, radius, space, type } from '@/theme/tokens';
+import {
+  PALETTE_KEYS,
+  PaletteKey,
+  border,
+  palette,
+  radius,
+  space,
+  type,
+} from '@/theme/tokens';
 import { ThemeMode, useTheme } from '@/theme/ThemeProvider';
 import ScreenHeader from '@/components/ScreenHeader';
 import { IconChevL } from '@/components/Icon';
@@ -15,9 +23,21 @@ const MODES: { value: ThemeMode; label: string; hint: string }[] = [
   { value: 'dark', label: 'Dark', hint: 'Always use dark mode' },
 ];
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export default function Settings() {
   const router = useRouter();
-  const { role, mode, setMode } = useTheme();
+  const {
+    role,
+    mode,
+    setMode,
+    primaryHue,
+    secondaryHue,
+    setPrimaryHue,
+    setSecondaryHue,
+  } = useTheme();
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -72,8 +92,79 @@ export default function Settings() {
           color: role.textSecondary,
           marginTop: 2,
         },
+        swatchBlock: {
+          paddingVertical: space.md,
+        },
+        swatchBlockDivider: {
+          borderTopWidth: border.hairline,
+          borderTopColor: role.border,
+        },
+        subLabel: {
+          ...type.labelSemibold,
+          color: role.textPrimary,
+          marginBottom: space.sm,
+        },
+        swatchRow: {
+          gap: space.sm,
+          paddingRight: space.lg,
+          alignItems: 'flex-start',
+        },
+        swatchItem: {
+          alignItems: 'center',
+          width: 56,
+        },
+        swatchWrap: {
+          width: 44,
+          height: 44,
+          borderRadius: radius.pill,
+          borderWidth: border.thick,
+          borderColor: 'transparent',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        swatchWrapActive: {
+          borderColor: role.textPrimary,
+        },
+        swatch: {
+          width: 36,
+          height: 36,
+          borderRadius: radius.pill,
+        },
+        swatchName: {
+          ...type.caption,
+          color: role.textSecondary,
+          marginTop: space.xs,
+          textAlign: 'center',
+        },
       }),
     [role],
+  );
+
+  const renderSwatchRow = (
+    selected: PaletteKey | null,
+    onSelect: (key: PaletteKey) => void,
+  ) => (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.swatchRow}
+    >
+      {PALETTE_KEYS.map((key) => {
+        const active = selected === key;
+        return (
+          <Pressable
+            key={key}
+            onPress={() => onSelect(key)}
+            style={styles.swatchItem}
+          >
+            <View style={[styles.swatchWrap, active && styles.swatchWrapActive]}>
+              <View style={[styles.swatch, { backgroundColor: palette[key] }]} />
+            </View>
+            <Text style={styles.swatchName}>{capitalize(key)}</Text>
+          </Pressable>
+        );
+      })}
+    </ScrollView>
   );
 
   return (
@@ -109,6 +200,18 @@ export default function Settings() {
               </Pressable>
             );
           })}
+        </View>
+
+        <Text style={styles.section}>Theme</Text>
+        <View style={styles.group}>
+          <View style={styles.swatchBlock}>
+            <Text style={styles.subLabel}>Primary</Text>
+            {renderSwatchRow(primaryHue, setPrimaryHue)}
+          </View>
+          <View style={[styles.swatchBlock, styles.swatchBlockDivider]}>
+            <Text style={styles.subLabel}>Secondary</Text>
+            {renderSwatchRow(secondaryHue, setSecondaryHue)}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

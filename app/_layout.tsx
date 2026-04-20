@@ -10,8 +10,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    TiemposHeadline_400Regular: require('../assets/fonts/Tiempos/TiemposHeadline-Regular.otf'),
-    TiemposHeadline_400RegularItalic: require('../assets/fonts/Tiempos/TiemposHeadline-RegularItalic.otf'),
+    TiemposHeadline_400Regular: require('../assets/fonts/tiempos/TiemposHeadline-Regular.otf'),
+    TiemposHeadline_400RegularItalic: require('../assets/fonts/tiempos/TiemposHeadline-RegularItalic.otf'),
     ModernEra_400Regular: require('../assets/fonts/ModernEra/ModernEra-Regular.ttf'),
   });
 
@@ -66,6 +66,7 @@ function RootNav() {
         <Stack.Screen name="profile/edit" />
         <Stack.Screen name="matches" />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="backgrounds" />
         <Stack.Screen name="premium/preferred" />
         <Stack.Screen
           name="premium/plans"

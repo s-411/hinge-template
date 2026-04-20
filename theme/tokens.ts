@@ -7,6 +7,7 @@
 // Locked to defaults: light mode, terracotta accent, comfy density, serif display.
 
 import { StyleSheet } from 'react-native';
+import { deriveRoleOverrides } from './color';
 
 // -----------------------------------------------------------------------------
 // Named palette — REFERENCE ONLY. Not consumed by any screen directly.
@@ -44,6 +45,23 @@ export const palette = {
   // Utility — use only where OS requires pure white
   brightWhite: '#FFFFFF',
 } as const;
+
+// Keys exposed to the runtime theme picker on the settings screen.
+// Excludes `brightWhite` (reserved for OS chrome).
+export type PaletteKey = Exclude<keyof typeof palette, 'brightWhite'>;
+export const PALETTE_KEYS: readonly PaletteKey[] = [
+  'midnight',
+  'aubergine',
+  'lilac',
+  'mauve',
+  'mist',
+  'sand',
+  'pebble',
+  'stone',
+  'forest',
+  'kelp',
+  'coral',
+];
 
 // -----------------------------------------------------------------------------
 // Primitives — raw palette.
@@ -228,8 +246,27 @@ export type Role = { [K in keyof typeof role]: string };
 // are shared between the two branches. Everything else flips.
 // -----------------------------------------------------------------------------
 
-export function resolveRole(mode: 'light' | 'dark'): Role {
-  if (mode === 'light') return role;
+export function resolveRole(
+  mode: 'light' | 'dark',
+  overrides?: {
+    primary?: string;
+    secondary?: string;
+    pageBg?: string;
+    cardBg?: string;
+  },
+): Role {
+  const derived = deriveRoleOverrides(
+    overrides?.primary ?? null,
+    overrides?.secondary ?? null,
+    mode,
+  );
+  const surfaces: Partial<Role> = {};
+  if (overrides?.pageBg) surfaces.surfacePage = overrides.pageBg;
+  if (overrides?.cardBg) {
+    surfaces.surfaceCard = overrides.cardBg;
+    surfaces.surfaceElevated = overrides.cardBg;
+  }
+  if (mode === 'light') return { ...role, ...derived, ...surfaces };
   return {
     // Brand stays.
     primary: colorsDark.accent,
@@ -290,6 +327,13 @@ export function resolveRole(mode: 'light' | 'dark'): Role {
     // Chrome fill — dark in both modes, but a different dark in dark mode
     // so the tab bar lifts off the page via elevation rather than contrast.
     chromeFill: colorsDark.bgElev,
+
+    // User-selected hue overrides — take precedence over the baked-in dark
+    // accentSoft/accentDeep since those are tied to the default purple.
+    ...derived,
+
+    // User-selected background overrides.
+    ...surfaces,
   };
 }
 

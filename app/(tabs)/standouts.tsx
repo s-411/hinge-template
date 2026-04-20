@@ -14,6 +14,15 @@ type Row = { num: string; label: string; path: string; note?: string };
 
 const SECTIONS: { title: string; subtitle: string; rows: Row[] }[] = [
   {
+    title: 'Dev',
+    subtitle: 'Utility screens outside the manifest',
+    rows: [
+      { num: '–', label: 'Backgrounds', path: '/backgrounds', note: 'page + content colour pickers' },
+      { num: '–', label: 'Edit profile', path: '/profile/edit', note: 'exercises the keyboard Hide button' },
+      { num: '–', label: 'Settings', path: '/settings', note: 'theme toggle + hue pickers' },
+    ],
+  },
+  {
     title: 'Onboarding',
     subtitle: 'Welcome through sign-up question flow',
     rows: [
@@ -64,14 +73,6 @@ const SECTIONS: { title: string; subtitle: string; rows: Row[] }[] = [
       { num: '28', label: 'Profile (self)', path: '/(tabs)/profile' },
       { num: '29', label: 'Profile · Poll banner', path: '/modal/profile-daisy', note: 'slide-up modal' },
       { num: '30', label: 'Dating Preferences', path: '/modal/preferences', note: 'slide-up modal' },
-    ],
-  },
-  {
-    title: 'Dev',
-    subtitle: 'Utility screens outside the manifest',
-    rows: [
-      { num: '–', label: 'Edit profile', path: '/profile/edit', note: 'exercises the keyboard Hide button' },
-      { num: '–', label: 'Settings', path: '/settings', note: 'theme toggle + future settings' },
     ],
   },
 ];
