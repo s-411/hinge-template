@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Connect — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; overflow: hidden; }
+  * { box-sizing: border-box; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="theme.jsx"></script>
+<script type="text/babel" src="icons.jsx"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="phone.jsx"></script>
+<script type="text/babel" src="screens-onboarding.jsx"></script>
+<script type="text/babel" src="screens-prompts.jsx"></script>
+<script type="text/babel" src="screens-profile.jsx"></script>
+<script type="text/babel" src="screens-discovery.jsx"></script>
+<script type="text/babel" src="screens-onboarding-more.jsx"></script>
+<script type="text/babel" src="screens-premium.jsx"></script>
+<script type="text/babel" src="screens-paywalls.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+function App() {
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data) return;
+      if (e.data.type === '__activate_edit_mode') setEditMode(true);
+      else if (e.data.type === '__deactivate_edit_mode') setEditMode(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const theme = useMemo(() => buildTheme(tweaks), [tweaks]);
+
+  const update = (patch) => {
+    const next = { ...tweaks, ...patch };
+    setTweaks(next);
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: patch }, '*');
+  };
+
+  const screens = [
+    { sec: 'on', label: '01  Welcome',              comp: <WelcomeScreen theme={theme}/> },
+    { sec: 'on', label: '02  Intro',                comp: <IntroScreen theme={theme}/> },
+    { sec: 'on', label: '03  Name',                 comp: <NameScreen theme={theme}/> },
+    { sec: 'on', label: '04  Date of Birth',        comp: <DateOfBirthScreen theme={theme}/> },
+    { sec: 'on', label: '05  Confirm Info',         comp: <ConfirmInfoScreen theme={theme}/> },
+    { sec: 'on', label: '06  Location',             comp: <LocationScreen theme={theme}/> },
+    { sec: 'on', label: '07  Education',            comp: <EducationScreen theme={theme}/> },
+    { sec: 'on', label: '08  Height',               comp: <HeightScreen theme={theme}/> },
+    { sec: 'on', label: '09  Family Plans',         comp: <FamilyPlansScreen theme={theme}/> },
+    { sec: 'on', label: '10  Notifications',        comp: <NotificationsScreen theme={theme}/> },
+    { sec: 'on', label: '11  Notifications · Prompt', comp: <NotificationsScreen theme={theme} dialog/> },
+    { sec: 'on', label: '12  Photo Grid',           comp: <PhotoGridScreen theme={theme}/> },
+    { sec: 'on', label: '13  Profile Builder',      comp: <ProfileBuilderScreen theme={theme}/> },
+    { sec: 'on', label: '14  Prompt Library',       comp: <PromptLibraryScreen theme={theme}/> },
+
+    { sec: 'co', label: '15  Discovery · Prompt',   comp: <DiscoveryScreen theme={theme}/> },
+    { sec: 'co', label: '16  Discovery · Photo',    comp: <DiscoveryPhotoScreen theme={theme}/> },
+    { sec: 'co', label: '17  Profile Detail',       comp: <ProfileDetailScreen theme={theme}/> },
+    { sec: 'co', label: '18  Bloom Upsell',         comp: <RoseUpsellScreen theme={theme}/> },
+    { sec: 'co', label: '19  Likes You · Boost',    comp: <LikesBoostScreen theme={theme}/> },
+    { sec: 'co', label: '20  Likes You · Modal',    comp: <ModalScreen theme={theme}/> },
+    { sec: 'co', label: '21  Matches · Empty',      comp: <MatchesEmptyScreen theme={theme}/> },
+    { sec: 'co', label: '22  Prompt Guide',         comp: <PromptGuideScreen theme={theme}/> },
+    { sec: 'co', label: '23  What Works',           comp: <WhatWorksScreen theme={theme}/> },
+
+    { sec: 'pr', label: '24  Preferred Paywall',    comp: <PreferredPaywallScreen theme={theme}/> },
+    { sec: 'pr', label: '25  Subscription Plans',   comp: <SubscriptionCarouselScreen theme={theme}/> },
+    { sec: 'pr', label: '26  Connect+ Paywall',     comp: <PaywallPlusScreen theme={theme}/> },
+    { sec: 'pr', label: '27  Connect Pro Paywall',  comp: <PaywallProScreen theme={theme}/> },
+
+    { sec: 'pf', label: '28  Profile (self)',       comp: <ProfileScreen theme={theme}/> },
+    { sec: 'pf', label: '29  Profile · Poll banner',comp: <ProfileDaisyScreen theme={theme}/> },
+    { sec: 'pf', label: '30  Dating Preferences',   comp: <PreferencesScreen theme={theme}/> },
+  ];
+  const bySec = (s) => screens.filter(x => x.sec === s);
+
+  return (
+    <>
+      <DesignCanvas>
+        <div style={{ padding: '30px 60px 16px' }}>
+          <div style={{
+            fontFamily: '"Instrument Serif", Georgia, serif', fontSize: 48,
+            color: '#1a1612', letterSpacing: -0.5, lineHeight: 1,
+          }}>Connect</div>
+          <div style={{
+            fontFamily: 'Inter, system-ui, sans-serif', fontSize: 14,
+            color: 'rgba(60,50,40,0.7)', marginTop: 6,
+          }}>Dating app prototype · For people who date slowly · 12 screens</div>
+        </div>
+        <DCSection title="Onboarding" subtitle="Welcome through sign-up question flow" gap={56}>
+          {bySec('on').map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme} dark={s.label.includes('Welcome') ? true : theme.dark}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+        <DCSection title="Core product" subtitle="Discovery, likes, matches, tips" gap={56}>
+          {bySec('co').map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+        <DCSection title="Premium" subtitle="Paywall and subscription flows" gap={56}>
+          {bySec('pr').map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+        <DCSection title="Your profile" subtitle="Profile detail and settings" gap={56}>
+          {bySec('pf').map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+      </DesignCanvas>
+      {editMode && <TweaksPanel tweaks={tweaks} update={update} theme={theme}/>}
+    </>
+  );
+}
+
+function TweaksPanel({ tweaks, update, theme }) {
+  const group = { marginBottom: 14 };
+  const label = { fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
+    letterSpacing: 0.6, color: 'rgba(255,255,255,0.5)', marginBottom: 6 };
+  const row = { display: 'flex', gap: 4, flexWrap: 'wrap' };
+  const chip = (active) => ({
+    padding: '6px 10px', fontSize: 12, borderRadius: 6, cursor: 'pointer',
+    background: active ? theme.color.accent : 'rgba(255,255,255,0.08)',
+    color: active ? '#fff' : 'rgba(255,255,255,0.85)',
+    border: 'none', fontFamily: 'Inter, sans-serif', fontWeight: 500,
+  });
+  const swatch = (k, active) => {
+    const a = ACCENTS[k];
+    return {
+      width: 28, height: 28, borderRadius: 999, cursor: 'pointer',
+      border: active ? '2px solid #fff' : '2px solid transparent',
+      background: `oklch(0.52 ${a.chroma} ${a.hue})`,
+    };
+  };
+  return (
+    <div style={{
+      position: 'fixed', right: 20, bottom: 20, zIndex: 100,
+      background: 'rgba(20,18,16,0.96)',
+      backdropFilter: 'blur(20px)',
+      color: '#fff', padding: 18, borderRadius: 16, width: 260,
+      fontFamily: 'Inter, system-ui, sans-serif',
+      boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+    }}>
+      <div style={{
+        fontFamily: '"Instrument Serif", serif', fontSize: 22, marginBottom: 12, letterSpacing: -0.2,
+      }}>Tweaks</div>
+      <div style={group}>
+        <div style={label}>Mode</div>
+        <div style={row}>
+          <button style={chip(!tweaks.dark)} onClick={() => update({ dark: false })}>Light</button>
+          <button style={chip(tweaks.dark)} onClick={() => update({ dark: true })}>Dark</button>
+        </div>
+      </div>
+      <div style={group}>
+        <div style={label}>Accent</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {Object.keys(ACCENTS).map(k => (
+            <button key={k} style={swatch(k, tweaks.accent === k)} onClick={() => update({ accent: k })} title={k}/>
+          ))}
+        </div>
+      </div>
+      <div style={group}>
+        <div style={label}>Display type</div>
+        <div style={row}>
+          <button style={chip(tweaks.display === 'serif')} onClick={() => update({ display: 'serif' })}>Serif</button>
+          <button style={chip(tweaks.display === 'sans')} onClick={() => update({ display: 'sans' })}>Sans</button>
+        </div>
+      </div>
+      <div style={group}>
+        <div style={label}>Density</div>
+        <div style={row}>
+          <button style={chip(tweaks.density === 'comfy')} onClick={() => update({ density: 'comfy' })}>Comfy</button>
+          <button style={chip(tweaks.density === 'compact')} onClick={() => update({ density: 'compact' })}>Compact</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Connect — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; overflow: hidden; }
+  * { box-sizing: border-box; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#f6f1ea">
+  <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="400" fill="#f6f1ea"/>
+    <circle cx="200" cy="180" r="80" fill="oklch(0.92 0.065 35)"/>
+    <circle cx="200" cy="180" r="80" fill="none" stroke="#1a1612" stroke-width="2" stroke-dasharray="3 5"/>
+    <line x1="140" y1="235" x2="260" y2="235" stroke="#1a1612" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="175" cy="228" r="12" fill="#f6f1ea" stroke="#1a1612" stroke-width="3"/>
+    <circle cx="175" cy="228" r="5" fill="#1a1612"/>
+    <circle cx="225" cy="228" r="12" fill="#f6f1ea" stroke="#1a1612" stroke-width="3"/>
+    <circle cx="225" cy="228" r="5" fill="#1a1612"/>
+    <text x="200" y="310" font-family="Georgia, serif" font-size="32" fill="#1a1612" text-anchor="middle" font-style="italic">Connect</text>
+  </svg>
+</template>
+<div id="root"></div>
+
+<script type="text/babel" src="theme.jsx"></script>
+<script type="text/babel" src="icons.jsx"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="phone.jsx"></script>
+<script type="text/babel" src="screens-onboarding.jsx"></script>
+<script type="text/babel" src="screens-prompts.jsx"></script>
+<script type="text/babel" src="screens-profile.jsx"></script>
+<script type="text/babel" src="screens-discovery.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+function App() {
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data) return;
+      if (e.data.type === '__activate_edit_mode') setEditMode(true);
+      else if (e.data.type === '__deactivate_edit_mode') setEditMode(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const theme = useMemo(() => buildTheme(tweaks), [tweaks]);
+
+  const update = (patch) => {
+    const next = { ...tweaks, ...patch };
+    setTweaks(next);
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: patch }, '*');
+  };
+
+  const screens = [
+    { label: '01  Welcome',        comp: <WelcomeScreen theme={theme}/> },
+    { label: '02  Intro',          comp: <IntroScreen theme={theme}/> },
+    { label: '03  Onboarding · Education', comp: <EducationScreen theme={theme}/> },
+    { label: '04  Profile Builder',        comp: <ProfileBuilderScreen theme={theme}/> },
+    { label: '05  Prompt Library',         comp: <PromptLibraryScreen theme={theme}/> },
+    { label: '06  Discovery',              comp: <DiscoveryScreen theme={theme}/> },
+    { label: '07  Likes You · Boost sheet', comp: <LikesBoostScreen theme={theme}/> },
+    { label: '08  Likes You · Info modal',  comp: <ModalScreen theme={theme}/> },
+    { label: '09  What Works',              comp: <WhatWorksScreen theme={theme}/> },
+    { label: '10  Profile (self)',          comp: <ProfileScreen theme={theme}/> },
+    { label: '11  Dating Preferences',      comp: <PreferencesScreen theme={theme}/> },
+    { label: '12  Profile · Prompt poll',   comp: <ProfileDaisyScreen theme={theme}/> },
+  ];
+
+  return (
+    <>
+      <DesignCanvas>
+        <div style={{ padding: '30px 60px 16px' }}>
+          <div style={{
+            fontFamily: '"Instrument Serif", Georgia, serif', fontSize: 48,
+            color: '#1a1612', letterSpacing: -0.5, lineHeight: 1,
+          }}>Connect</div>
+          <div style={{
+            fontFamily: 'Inter, system-ui, sans-serif', fontSize: 14,
+            color: 'rgba(60,50,40,0.7)', marginTop: 6,
+          }}>Dating app prototype · For people who date slowly · 12 screens</div>
+        </div>
+        <DCSection title="Onboarding" subtitle="Welcome through sign-up question flow" gap={56}>
+          {screens.slice(0, 5).map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme} dark={s.label.includes('Welcome') ? true : theme.dark}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+        <DCSection title="Core product" subtitle="Discovery, likes, boost, tips" gap={56}>
+          {screens.slice(5, 9).map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+        <DCSection title="Your profile" subtitle="Self-view and preferences" gap={56}>
+          {screens.slice(9).map(s => (
+            <DCArtboard key={s.label} label={s.label} width={390} height={844}>
+              <Phone theme={theme}>{s.comp}</Phone>
+            </DCArtboard>
+          ))}
+        </DCSection>
+      </DesignCanvas>
+      {editMode && <TweaksPanel tweaks={tweaks} update={update} theme={theme}/>}
+    </>
+  );
+}
+
+function TweaksPanel({ tweaks, update, theme }) {
+  const group = { marginBottom: 14 };
+  const label = { fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
+    letterSpacing: 0.6, color: 'rgba(255,255,255,0.5)', marginBottom: 6 };
+  const row = { display: 'flex', gap: 4, flexWrap: 'wrap' };
+  const chip = (active) => ({
+    padding: '6px 10px', fontSize: 12, borderRadius: 6, cursor: 'pointer',
+    background: active ? theme.color.accent : 'rgba(255,255,255,0.08)',
+    color: active ? '#fff' : 'rgba(255,255,255,0.85)',
+    border: 'none', fontFamily: 'Inter, sans-serif', fontWeight: 500,
+  });
+  const swatch = (k, active) => {
+    const a = ACCENTS[k];
+    return {
+      width: 28, height: 28, borderRadius: 999, cursor: 'pointer',
+      border: active ? '2px solid #fff' : '2px solid transparent',
+      background: `oklch(0.52 ${a.chroma} ${a.hue})`,
+    };
+  };
+  return (
+    <div style={{
+      position: 'fixed', right: 20, bottom: 20, zIndex: 100,
+      background: 'rgba(20,18,16,0.96)',
+      backdropFilter: 'blur(20px)',
+      color: '#fff', padding: 18, borderRadius: 16, width: 260,
+      fontFamily: 'Inter, system-ui, sans-serif',
+      boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+    }}>
+      <div style={{
+        fontFamily: '"Instrument Serif", serif', fontSize: 22, marginBottom: 12, letterSpacing: -0.2,
+      }}>Tweaks</div>
+      <div style={group}>
+        <div style={label}>Mode</div>
+        <div style={row}>
+          <button style={chip(!tweaks.dark)} onClick={() => update({ dark: false })}>Light</button>
+          <button style={chip(tweaks.dark)} onClick={() => update({ dark: true })}>Dark</button>
+        </div>
+      </div>
+      <div style={group}>
+        <div style={label}>Accent</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {Object.keys(ACCENTS).map(k => (
+            <button key={k} style={swatch(k, tweaks.accent === k)} onClick={() => update({ accent: k })} title={k}/>
+          ))}
+        </div>
+      </div>
+      <div style={group}>
+        <div style={label}>Display type</div>
+        <div style={row}>
+          <button style={chip(tweaks.display === 'serif')} onClick={() => update({ display: 'serif' })}>Serif</button>
+          <button style={chip(tweaks.display === 'sans')} onClick={() => update({ display: 'sans' })}>Sans</button>
+        </div>
+      </div>
+      <div style={group}>
+        <div style={label}>Density</div>
+        <div style={row}>
+          <button style={chip(tweaks.density === 'comfy')} onClick={() => update({ density: 'comfy' })}>Comfy</button>
+          <button style={chip(tweaks.density === 'compact')} onClick={() => update({ density: 'compact' })}>Compact</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
