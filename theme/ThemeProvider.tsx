@@ -22,6 +22,7 @@ import React, {
 } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import {
   PALETTE_KEYS,
   PaletteKey,
@@ -56,11 +57,15 @@ type Theme = {
   setCardBgHex: (hex: string | null) => void;
 };
 
-const MODE_KEY = 'connect.themeMode';
-const PRIMARY_KEY = 'connect.primaryHue';
-const SECONDARY_KEY = 'connect.secondaryHue';
-const PAGE_BG_KEY = 'connect.pageBgHex';
-const CARD_BG_KEY = 'connect.cardBgHex';
+// Namespace AsyncStorage keys by app slug so two forks of this template share
+// no state when installed on the same dev device. Falls back to 'app' if slug
+// isn't resolvable (e.g. during certain test harnesses).
+const ns = Constants.expoConfig?.slug ?? 'app';
+const MODE_KEY = `${ns}.themeMode`;
+const PRIMARY_KEY = `${ns}.primaryHue`;
+const SECONDARY_KEY = `${ns}.secondaryHue`;
+const PAGE_BG_KEY = `${ns}.pageBgHex`;
+const CARD_BG_KEY = `${ns}.cardBgHex`;
 
 function isHex(v: unknown): v is string {
   return typeof v === 'string' && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v);

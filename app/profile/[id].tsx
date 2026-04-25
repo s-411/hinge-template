@@ -10,19 +10,18 @@ import { useTheme } from '@/theme/ThemeProvider';
 import ScreenHeader from '@/components/ScreenHeader';
 import PromptCard from '@/components/PromptCard';
 import { IconChevL, IconDots, IconHeart, IconX } from '@/components/Icon';
+import { demoProfiles } from '@/lib/fixtures';
 
-const FACTS: { kind: 'work' | 'school' | 'home'; label: string }[] = [
-  { kind: 'work', label: 'Personal Trainer' },
-  { kind: 'school', label: 'University of Minnesota - Twin\nCities Campus' },
-  { kind: 'school', label: 'Institute of Culinary Education' },
-  { kind: 'home', label: 'Lake Geneva, WI' },
-];
+const FACTS = demoProfiles.detail.facts;
 
 export default function ProfileDetail() {
   const router = useRouter();
   const { role } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const name = typeof id === 'string' ? id.charAt(0).toUpperCase() + id.slice(1) : 'Bridget';
+  const name =
+    typeof id === 'string'
+      ? id.charAt(0).toUpperCase() + id.slice(1)
+      : demoProfiles.detail.defaultName;
 
   const styles = useMemo(
     () =>
@@ -159,7 +158,7 @@ export default function ProfileDetail() {
             <IconChevL size={20} color={role.textPrimary} stroke={1.8} />
           </Pressable>
         }
-        title={name === 'Demo' ? 'Bridget' : name}
+        title={name === 'Demo' ? demoProfiles.detail.defaultName : name}
         center
         right={<IconDots size={22} color={role.textPrimary} />}
         borderBottom
@@ -178,17 +177,17 @@ export default function ProfileDetail() {
         </View>
         <View style={{ paddingHorizontal: space.lg, marginTop: space.sm }}>
           <PromptCard
-            label="My greatest strength"
-            answer="positivity"
+            label={demoProfiles.detail.prompt.label}
+            answer={demoProfiles.detail.prompt.answer}
             answerSize={36}
             showLikeButton
           />
         </View>
         <View style={styles.stats}>
           {[
-            { kind: 'age' as const, label: '25' },
-            { kind: 'height' as const, label: `5' 8"` },
-            { kind: 'loc' as const, label: 'Lower East Side' },
+            { kind: 'age' as const, label: demoProfiles.detail.age },
+            { kind: 'height' as const, label: demoProfiles.detail.height },
+            { kind: 'loc' as const, label: demoProfiles.detail.location },
           ].map((s, i) => (
             <View key={i} style={styles.statCell}>
               <StatIcon kind={s.kind} />

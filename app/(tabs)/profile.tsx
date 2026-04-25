@@ -10,6 +10,8 @@ import ScreenHeader from '@/components/ScreenHeader';
 import BoostPill from '@/components/BoostPill';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import { IconPencil, IconSliders, IconGear, IconBulb } from '@/components/Icon';
+import { brand } from '@/lib/brand';
+import { demoProfiles } from '@/lib/fixtures';
 
 export default function Profile() {
   const router = useRouter();
@@ -112,15 +114,15 @@ export default function Profile() {
         <View style={styles.avatarWrap}>
           <View style={styles.avatarRing}>
             <View style={styles.avatarInner}>
-              <ProfileAvatar size={130} seed="sarah" />
+              <ProfileAvatar size={130} seed={demoProfiles.self.name.toLowerCase()} />
             </View>
             <View style={styles.editBtn}>
               <IconPencil size={16} color={role.textPrimary} stroke={border.medium} />
             </View>
           </View>
-          <Text style={styles.name}>Sarah</Text>
+          <Text style={styles.name}>{demoProfiles.self.name}</Text>
           <View style={styles.memberRow}>
-            <Text style={styles.memberText}>Connect Member</Text>
+            <Text style={styles.memberText}>{brand.memberLabel}</Text>
             <Svg width={14} height={14} viewBox="0 0 24 24" fill={role.secondary}>
               <Path d="M12 2l2 2 3-.5.5 3 2 2-2 2-.5 3-3-.5-2 2-2-2-3 .5-.5-3-2-2 2-2 .5-3 3 .5 2-2z" />
               <Path

@@ -7,13 +7,9 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { border, space, type } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 import { IconCheck } from '@/components/Icon';
+import { paywallBenefits } from '@/lib/fixtures';
 
-const BENEFITS = [
-  'Send unlimited likes',
-  'See everyone who likes you',
-  'Set extra preferences',
-  'See 2× Standouts',
-];
+const BENEFITS = paywallBenefits.preferred;
 
 export default function Preferred() {
   const router = useRouter();

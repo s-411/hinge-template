@@ -22,6 +22,11 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
+export function isHexDark(hex: string): boolean {
+  const { r, g, b } = parseHex(hex);
+  return (r * 299 + g * 587 + b * 114) / 1000 < 140;
+}
+
 export function hexToHsl(hex: string): { h: number; s: number; l: number } {
   const { r, g, b } = parseHex(hex);
   const rn = r / 255;

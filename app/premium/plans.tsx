@@ -8,12 +8,10 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { border, fonts, radius, shadow, space, type } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 import { IconX, IconChev } from '@/components/Icon';
+import { brand } from '@/lib/brand';
+import { preferredPlans } from '@/lib/fixtures';
 
-const PLANS = [
-  { n: 1, unit: 'month', price: '$29.99', per: '', rec: false },
-  { n: 3, unit: 'months', price: '$59.99', per: '($19.99/mo)', rec: true },
-  { n: 6, unit: 'months', price: '$89.99', per: '($14.99/mo)', rec: false },
-];
+const PLANS = preferredPlans;
 
 export default function Plans() {
   const router = useRouter();
@@ -114,7 +112,7 @@ export default function Plans() {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <Text style={styles.legal}>
           <Text style={{ fontFamily: fonts.sansBold }}>Recurring billing, cancel anytime.</Text>{'\n'}
-          By tapping Subscribe, your payment will be charged to your Connect account, and your subscription will automatically renew for the same package length at the same price until you cancel in settings. By tapping Subscribe you agree to our <Text style={{ color: role.primary, fontFamily: fonts.sansSemibold }}>Terms</Text>.
+          By tapping Subscribe, your payment will be charged to your {brand.accountName}, and your subscription will automatically renew for the same package length at the same price until you cancel in settings. By tapping Subscribe you agree to our <Text style={{ color: role.primary, fontFamily: fonts.sansSemibold }}>Terms</Text>.
         </Text>
         <View style={styles.card}>
           <View style={styles.cardHeader}>

@@ -8,15 +8,12 @@ import { border, fonts, radius, space, type } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 import ScreenHeader from '@/components/ScreenHeader';
 import { IconX } from '@/components/Icon';
+import { brand } from '@/lib/brand';
+import { whatWorksCards, whatWorksIntroLead, type WhatWorksIlloKind } from '@/lib/fixtures';
 
-type IlloKind = 'camera' | 'quote' | 'sun' | 'chat';
+type IlloKind = WhatWorksIlloKind;
 
-const ITEMS: { t: string; s: string; ill: IlloKind }[] = [
-  { t: 'Photos', s: 'How to pick your best 6 photos.', ill: 'camera' },
-  { t: 'Prompts', s: 'Show your personality with unique answers.', ill: 'quote' },
-  { t: 'Matching', s: 'Every match starts with a like — make it count.', ill: 'sun' },
-  { t: 'Conversation', s: 'Learn how to move your convos to a date.', ill: 'chat' },
-];
+const ITEMS = whatWorksCards;
 
 export default function WhatWorks() {
   const router = useRouter();
@@ -140,7 +137,7 @@ export default function WhatWorks() {
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
         <Text style={styles.intro}>
-          Expert dating guides to help you along your Connect journey.
+          {whatWorksIntroLead} {brand.name} journey.
         </Text>
         <View style={styles.grid}>
           {ITEMS.map((it) => (

@@ -22,23 +22,12 @@ import {
 import { useTheme } from '@/theme/ThemeProvider';
 import FeatureRow from '@/components/FeatureRow';
 import { IconX } from '@/components/Icon';
+import { brand } from '@/lib/brand';
+import { paywallBenefits, tierPlans } from '@/lib/fixtures';
 
 type Tier = 'plus' | 'pro';
 
-const PLANS = {
-  plus: [
-    { tag: 'New', dur: '1 week', price: '$19.99/wk', selected: false },
-    { tag: 'Save 42%', dur: '1 month', price: '$11.66/wk', selected: false },
-    { tag: 'Save 65%', dur: '3 months', price: '$6.99/wk', selected: true },
-    { tag: 'Save 71%', dur: '6 months', price: '$5.83/wk', selected: false },
-  ],
-  pro: [
-    { tag: 'New', dur: '1 week', price: '$29.99/wk', selected: false },
-    { tag: 'Save 53%', dur: '1 month', price: '$13.99/wk', selected: false },
-    { tag: 'Save 74%', dur: '3 months', price: '$7.77/wk', selected: true },
-    { tag: 'Save 77%', dur: '6 months', price: '$6.99/wk', selected: false },
-  ],
-};
+const PLANS = tierPlans;
 
 function PlusFeatureIcon({ kind, color }: { kind: string; color: string }) {
   const common = {
@@ -286,7 +275,7 @@ export default function Paywall({ tier }: { tier: Tier }) {
                 { color: !pro ? role.primary : t.inkSoft },
               ]}
             >
-              Connect+
+              {brand.plusName}
             </Text>
             {!pro ? <View style={[styles.tabUnderline, { backgroundColor: role.primary }]} /> : null}
           </Pressable>
@@ -300,7 +289,7 @@ export default function Paywall({ tier }: { tier: Tier }) {
                 { color: pro ? role.textOnDark : t.inkSoft },
               ]}
             >
-              Connect Pro
+              {brand.proName}
             </Text>
             {pro ? <View style={[styles.tabUnderline, { backgroundColor: role.textOnDark }]} /> : null}
           </Pressable>
@@ -386,23 +375,7 @@ export default function Paywall({ tier }: { tier: Tier }) {
         </ScrollView>
         <View style={{ paddingHorizontal: space.lg, paddingTop: 24 }}>
           {pro
-            ? [
-                {
-                  swatch: 'a' as const,
-                  title: 'Enhanced recommendations',
-                  subtitle: 'Access to your type',
-                },
-                {
-                  swatch: 'b' as const,
-                  title: 'Skip the line',
-                  subtitle: 'Get recommended to matches sooner',
-                },
-                {
-                  swatch: 'c' as const,
-                  title: 'Priority likes',
-                  subtitle: 'Your likes stay at the top of their list',
-                },
-              ].map((f, i, a) => (
+            ? paywallBenefits.pro.map((f, i, a) => (
                 <FeatureRow
                   key={i}
                   icon={<ProFeatureThumb swatch={f.swatch} textOnDark={role.textOnDark} scrimGlyph={role.scrimGlyph} />}
@@ -412,13 +385,7 @@ export default function Paywall({ tier }: { tier: Tier }) {
                   palette={{ ink: t.ink, inkSoft: t.inkSoft, line: t.line }}
                 />
               ))
-            : [
-                { kind: 'inf', title: 'Send unlimited likes*' },
-                { kind: 'person', title: 'See everyone who likes you' },
-                { kind: 'prefs', title: 'Set more dating preferences' },
-                { kind: 'star', title: 'See 2× Standouts daily' },
-                { kind: 'sort', title: 'Sort all incoming likes' },
-              ].map((f, i) => (
+            : paywallBenefits.plus.map((f, i) => (
                 <View key={i} style={styles.plusRow}>
                   <View
                     style={[

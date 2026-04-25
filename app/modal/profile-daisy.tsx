@@ -9,6 +9,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 import BoostPill from '@/components/BoostPill';
 import ProfileAvatar from '@/components/ProfileAvatar';
 import { IconPencil, IconSliders, IconGear, IconBulb, IconList, IconX } from '@/components/Icon';
+import { brand } from '@/lib/brand';
+import { demoProfiles } from '@/lib/fixtures';
 
 export default function ProfileDaisy() {
   const router = useRouter();
@@ -123,12 +125,12 @@ export default function ProfileDaisy() {
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <View style={styles.header}>
           <View style={styles.avatarWrap}>
-            <ProfileAvatar size={54} seed="daisy" />
+            <ProfileAvatar size={54} seed={demoProfiles.modal.name.toLowerCase()} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.name}>Daisy</Text>
+            <Text style={styles.name}>{demoProfiles.modal.name}</Text>
             <View style={styles.memberRow}>
-              <Text style={styles.memberText}>Connect member</Text>
+              <Text style={styles.memberText}>{brand.memberLabelLower}</Text>
               <Svg width={12} height={12} viewBox="0 0 24 24" fill={role.textPrimary}>
                 <Path d="M12 2l2 2 3-.5.5 3 2 2-2 2-.5 3-3-.5-2 2-2-2-3 .5-.5-3-2-2 2-2 .5-3 3 .5 2-2z" />
               </Svg>

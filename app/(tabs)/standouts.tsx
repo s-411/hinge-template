@@ -9,6 +9,7 @@ import { border, radius, space, type } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
 import ScreenHeader from '@/components/ScreenHeader';
 import { IconChev } from '@/components/Icon';
+import { brand } from '@/lib/brand';
 
 type Row = { num: string; label: string; path: string; note?: string };
 
@@ -62,8 +63,8 @@ const SECTIONS: { title: string; subtitle: string; rows: Row[] }[] = [
     rows: [
       { num: '24', label: 'Preferred Paywall', path: '/premium/preferred' },
       { num: '25', label: 'Subscription Plans', path: '/premium/plans', note: 'slide-up modal' },
-      { num: '26', label: 'Connect+ Paywall', path: '/premium/plus' },
-      { num: '27', label: 'Connect Pro Paywall', path: '/premium/pro', note: 'dark variant' },
+      { num: '26', label: `${brand.plusName} Paywall`, path: '/premium/plus' },
+      { num: '27', label: `${brand.proName} Paywall`, path: '/premium/pro', note: 'dark variant' },
     ],
   },
   {
@@ -142,7 +143,7 @@ export default function Standouts() {
       <ScreenHeader title="Screen gallery" center borderBottom />
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         <Text style={styles.intro}>
-          All 30 screens in the Connect design system, numbered per the manifest.
+          All 30 screens in the {brand.name} design system, numbered per the manifest.
           Tap any row to preview.
         </Text>
         {SECTIONS.map((section) => (

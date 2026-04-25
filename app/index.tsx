@@ -1,15 +1,26 @@
 // 01 Welcome — dark editorial hero with gradient ground.
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { setStatusBarStyle } from 'expo-status-bar';
 import { fonts, gradient, radius, space, type } from '@/theme/tokens';
 import { useTheme } from '@/theme/ThemeProvider';
+import { isHexDark } from '@/theme/color';
+import { brand } from '@/lib/brand';
 
 export default function Welcome() {
   const router = useRouter();
   const { role } = useTheme();
+
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarStyle('light');
+      return () => {
+        setStatusBarStyle(isHexDark(role.surfacePage) ? 'light' : 'dark');
+      };
+    }, [role.surfacePage]),
+  );
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -73,7 +84,6 @@ export default function Welcome() {
 
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar style="light" />
       <LinearGradient
         colors={gradient.phoneShell}
         start={{ x: 0.5, y: 0 }}
@@ -88,8 +98,8 @@ export default function Welcome() {
       />
 
       <View style={styles.hero}>
-        <Text style={styles.wordmark}>connect</Text>
-        <Text style={styles.tagline}>For people who date slowly.</Text>
+        <Text style={styles.wordmark}>{brand.name.toLowerCase()}</Text>
+        <Text style={styles.tagline}>{brand.tagline}</Text>
       </View>
 
       <View style={styles.footer}>

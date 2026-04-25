@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
+import { isHexDark } from '@/theme/color';
 import KeyboardHideButton from '@/components/KeyboardHideButton';
 
 SplashScreen.preventAutoHideAsync();
@@ -30,10 +31,10 @@ export default function RootLayout() {
 }
 
 function RootNav() {
-  const { role, resolvedMode } = useTheme();
+  const { role } = useTheme();
   return (
     <>
-      <StatusBar style={resolvedMode === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={isHexDark(role.surfacePage) ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerShown: false,

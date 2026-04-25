@@ -8,6 +8,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import ScreenHeader from '@/components/ScreenHeader';
 import PromptCard from '@/components/PromptCard';
 import { IconRewind, IconSliders, IconDots, IconHeart, IconX } from '@/components/Icon';
+import { demoProfiles } from '@/lib/fixtures';
 
 export default function Discover() {
   const { role } = useTheme();
@@ -95,10 +96,10 @@ export default function Discover() {
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 180 }}>
         <View style={styles.nameRow}>
-          <Text style={styles.name}>Kris</Text>
+          <Text style={styles.name}>{demoProfiles.feed.name}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <View style={{ width: 7, height: 7, borderRadius: radius.pill, backgroundColor: role.secondary }} />
-            <Text style={styles.activeLabel}>Active today</Text>
+            <Text style={styles.activeLabel}>{demoProfiles.feed.activeStatus}</Text>
           </View>
           <View style={{ flex: 1 }} />
           <IconDots size={22} color={role.textPrimary} stroke={border.medium} />
@@ -112,7 +113,7 @@ export default function Discover() {
             style={StyleSheet.absoluteFill}
           />
           <View style={styles.photoLabel}>
-            <Text style={styles.photoLabelText}>PHOTO 1 / 6</Text>
+            <Text style={styles.photoLabelText}>{demoProfiles.feed.photoLabel}</Text>
           </View>
           <Pressable style={styles.photoHeart}>
             <IconHeart size={20} color={role.primary} stroke={1.8} />
@@ -121,8 +122,8 @@ export default function Discover() {
 
         <View style={{ paddingHorizontal: space.lg, marginTop: space.md }}>
           <PromptCard
-            label="My most irrational fear"
-            answer="Talking to a live bard after 11pm."
+            label={demoProfiles.feed.prompt.label}
+            answer={demoProfiles.feed.prompt.answer}
           />
         </View>
       </ScrollView>
