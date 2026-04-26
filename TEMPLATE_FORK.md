@@ -145,12 +145,16 @@ theme/tokens.ts colors.bg, update it now.
 STEP 6 — NANOBANANA MCP (MANDATORY)
 ═══════════════════════════════════════════════════════════════════
 
-Install the Gemini MCP for this repo:
-  claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=$GEMINI_API_KEY
-
+Check if nanobanana is already connected (it's usually system-wide):
+  claude mcp list | grep nanobanana
+If output shows ✓ Connected → skip the install, move to step 7.
+If NOT connected → extract the key from a prior install:
+  grep -o '"GEMINI_API_KEY": *"[^"]*"' ~/.claude.json | head -1
+Use that value to install:
+  claude mcp add nanobanana uvx nanobanana-mcp-server@latest -e GEMINI_API_KEY=<the-key-value>
 Verify: claude mcp list | grep nanobanana → ✓ Connected
-If $GEMINI_API_KEY is empty, STOP — see CREDENTIALS.md.
-After installing, exit this Claude Code session and restart.
+If no key exists in ~/.claude.json, STOP and tell me.
+If you had to install (not just verify), exit Claude Code and restart.
 
 ═══════════════════════════════════════════════════════════════════
 STEP 7 — EAS INIT
