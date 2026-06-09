@@ -237,7 +237,7 @@ export const role = {
 
 // Type of the semantic role object — widened to plain strings so alternate
 // palettes (e.g. the dark resolver below) can provide different hex values.
-export type Role = { [K in keyof typeof role]: string };
+export type Role = { -readonly [K in keyof typeof role]: string };
 
 // -----------------------------------------------------------------------------
 // Dark-mode resolver — given a mode, returns the role object the app should
